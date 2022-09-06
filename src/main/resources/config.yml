@@ -1,0 +1,32 @@
+# Configurations for items.
+items:
+  # Which items you want to ban.
+  # Put as 'none' for no items.
+  # Default: 'none'
+  bannedItems:
+    - 'none'
+
+  # Maximum amount of an item you can have while in PVP.
+  # Should be formatted as 'item amount', for example: 'ender_pearl 5' (0 to disable the item while in PVP).
+  # Put as 'none 0' for no items.
+  # Default: 'none 0'
+  maxPVPStack:
+    - 'none 0'
+
+  # Max Enchantment Level for an enchantment.
+  # Should be formatted as 'enchantment level', for example: 'power 3' (0 to disable the enchantment).
+  # Put as 'none 0' for no limit.
+  # Default: 'none 0'
+  maxEnchantLevel:
+    - 'none 0'
+
+
+# Should a totem revive a player on death.
+# Default: true
+totemsRevive: true
+
+# Which effects should be banned.
+# Put as 'none' for no banned effects.
+# Default: - 'none'
+bannedEffects:
+  - 'none'

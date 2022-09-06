@@ -1,0 +1,6 @@
+name: MCLimiter
+version: 1.0.0
+main: me.thesnipe12.MCLimiter
+api-version: 1.19
+author: TheSnipe12
+description: A plugin to limit enchants, items and more!
