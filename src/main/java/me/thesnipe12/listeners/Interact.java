@@ -1,6 +1,5 @@
 package me.thesnipe12.listeners;
 
-import me.thesnipe12.MCLimiter;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -9,6 +8,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.Plugin;
 
 import java.util.List;
 
@@ -17,8 +17,8 @@ import static me.thesnipe12.Utils.removeBannedEnchant;
 import static me.thesnipe12.listeners.PVP.combat;
 
 public class Interact implements Listener {
-    MCLimiter plugin;
-    public Interact(MCLimiter plugin) {
+    private final Plugin plugin;
+    public Interact(Plugin plugin) {
         this.plugin = plugin;
     }
 

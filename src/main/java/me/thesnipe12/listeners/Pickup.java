@@ -1,6 +1,5 @@
 package me.thesnipe12.listeners;
 
-import me.thesnipe12.MCLimiter;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -8,6 +7,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.Plugin;
 
 import java.util.List;
 
@@ -16,9 +16,9 @@ import static me.thesnipe12.Utils.removeBannedEnchant;
 
 
 public class Pickup implements Listener {
-    private final MCLimiter plugin;
+    private final Plugin plugin;
 
-    public Pickup(MCLimiter plugin) {
+    public Pickup(Plugin plugin) {
         this.plugin = plugin;
     }
 

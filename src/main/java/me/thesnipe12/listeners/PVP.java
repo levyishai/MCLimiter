@@ -1,6 +1,5 @@
 package me.thesnipe12.listeners;
 
-import me.thesnipe12.MCLimiter;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -9,19 +8,20 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.Plugin;
 
 import java.util.HashMap;
 
 import static me.thesnipe12.Utils.isNumeric;
 
 public class PVP implements Listener {
-    MCLimiter plugin;
+    private final Plugin plugin;
 
-    public PVP(MCLimiter plugin) {
+    public PVP(Plugin plugin) {
         this.plugin = plugin;
     }
 
-    public static HashMap<Player, Integer> combat = new HashMap<>();
+    public static final HashMap<Player, Integer> combat = new HashMap<>();
 
     @EventHandler
     public void on(EntityDamageByEntityEvent event) {

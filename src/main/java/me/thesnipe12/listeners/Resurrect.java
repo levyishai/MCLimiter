@@ -1,13 +1,13 @@
 package me.thesnipe12.listeners;
 
-import me.thesnipe12.MCLimiter;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityResurrectEvent;
+import org.bukkit.plugin.Plugin;
 
 public class Resurrect implements Listener {
-    MCLimiter plugin;
-    public Resurrect(MCLimiter plugin) {
+    private final Plugin plugin;
+    public Resurrect(Plugin plugin) {
         this.plugin = plugin;
     }
     @EventHandler
