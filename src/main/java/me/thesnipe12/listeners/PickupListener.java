@@ -11,14 +11,14 @@ import org.bukkit.plugin.Plugin;
 
 import java.util.List;
 
-import static me.thesnipe12.Utils.containsIgnoreCase;
-import static me.thesnipe12.Utils.removeBannedEnchant;
+import static me.thesnipe12.Utilities.containsIgnoreCase;
+import static me.thesnipe12.Utilities.removeBannedEnchant;
 
 
-public class Pickup implements Listener {
+public class PickupListener implements Listener {
     private final Plugin plugin;
 
-    public Pickup(Plugin plugin) {
+    public PickupListener(Plugin plugin) {
         this.plugin = plugin;
     }
 
@@ -37,7 +37,7 @@ public class Pickup implements Listener {
         }
         
         if(!bannedItems.get(0).equals("none 0")&&containsIgnoreCase(maxPVPStack, itemType.toString(), true)) {
-            if (PVP.combat.get(player) > 0) event.setCancelled(true);
+            if (CombatListener.combat.get(player) > 0) event.setCancelled(true);
         }
         
         if ( item.getItemMeta() == null) return;
@@ -51,5 +51,6 @@ public class Pickup implements Listener {
             }, 1L);
         }
     }
+
 }
 

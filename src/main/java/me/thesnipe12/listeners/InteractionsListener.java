@@ -12,13 +12,14 @@ import org.bukkit.plugin.Plugin;
 
 import java.util.List;
 
-import static me.thesnipe12.Utils.containsIgnoreCase;
-import static me.thesnipe12.Utils.removeBannedEnchant;
-import static me.thesnipe12.listeners.PVP.combat;
+import static me.thesnipe12.Utilities.containsIgnoreCase;
+import static me.thesnipe12.Utilities.removeBannedEnchant;
+import static me.thesnipe12.listeners.CombatListener.combat;
 
-public class Interact implements Listener {
+public class InteractionsListener implements Listener {
     private final Plugin plugin;
-    public Interact(Plugin plugin) {
+
+    public InteractionsListener(Plugin plugin) {
         this.plugin = plugin;
     }
 
@@ -61,6 +62,7 @@ public class Interact implements Listener {
             event.setCancelled(true);
         }
     }
+
     @EventHandler
     public void on(PlayerInteractEvent event) {
         if (event.getItem() == null) return;
@@ -91,4 +93,5 @@ public class Interact implements Listener {
             }
         }
     }
+
 }

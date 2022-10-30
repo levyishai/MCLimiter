@@ -12,12 +12,12 @@ import org.bukkit.plugin.Plugin;
 
 import java.util.HashMap;
 
-import static me.thesnipe12.Utils.isNumeric;
+import static me.thesnipe12.Utilities.isNumeric;
 
-public class PVP implements Listener {
+public class CombatListener implements Listener {
     private final Plugin plugin;
 
-    public PVP(Plugin plugin) {
+    public CombatListener(Plugin plugin) {
         this.plugin = plugin;
     }
 
@@ -47,6 +47,7 @@ public class PVP implements Listener {
             limitItemsInInventoryFromList((Player) damaged, maxPVPStack);
         }
     }
+
     private void limitItemsInInventoryFromList(Player player,  HashMap<Material, Integer> list){
         HashMap<Material, Integer> itemsAmount = new HashMap<>();
         for(ItemStack item : player.getInventory().getContents()){
@@ -76,4 +77,5 @@ public class PVP implements Listener {
             }
         }
     }
+
 }
