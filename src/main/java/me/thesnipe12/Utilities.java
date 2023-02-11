@@ -2,6 +2,7 @@ package me.thesnipe12;
 
 import org.bukkit.NamespacedKey;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
@@ -63,11 +64,11 @@ public class Utilities {
     /**
      * Maximizes an ItemStack's enchantments from a given string that specifies the enchantment, and it's maximum.
      *
-     * @param item the ItemStack to maximize its enchantments.
-     * @param maxEnchantLevel the maximum level of the enchantment in a string list (should be formatted as 'enchantment level').
-     * @return the ItemStack with its enchantments maximized.
+     * @param item            the ItemStack to maximize its enchantments
+     * @param maxEnchantLevel the maximum level of the enchantment in a string list (should be formatted as 'enchantment level')
+     * @return the ItemStack with its enchantments maximized
      */
-    public static ItemStack removeBannedEnchant(ItemStack item, List<String> maxEnchantLevel) {
+    public static ItemStack maximizeEnchants(ItemStack item, List<String> maxEnchantLevel) {
         ItemStack lastItem = null;
 
         if (item.getItemMeta() == null || !item.getItemMeta().hasEnchants()) return item;
@@ -95,6 +96,14 @@ public class Utilities {
         }
 
         return lastItem;
+    }
+
+    public static void replaceItem(Player player, ItemStack toReplace, ItemStack replacement) {
+        final int firstToReplace = player.getInventory().first(toReplace);
+
+        if (firstToReplace != 1) {
+            player.getInventory().setItem(firstToReplace, replacement);
+        }
     }
 
 }

@@ -1,5 +1,6 @@
 package me.thesnipe12.listeners;
 
+import me.thesnipe12.Utilities;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -9,47 +10,60 @@ import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 
+import java.util.HashMap;
 import java.util.List;
 
 import static me.thesnipe12.Utilities.containsIgnoreCase;
-import static me.thesnipe12.Utilities.removeBannedEnchant;
+import static me.thesnipe12.Utilities.maximizeEnchants;
 
 
 public class PickupListener implements Listener {
     private final Plugin plugin;
+    private final HashMap<Player, Integer> combatTimer;
 
-    public PickupListener(Plugin plugin) {
+    public PickupListener(Plugin plugin, HashMap<Player, Integer> combatTimer) {
         this.plugin = plugin;
+        this.combatTimer = combatTimer;
     }
 
     @EventHandler
     public void on(EntityPickupItemEvent event) {
         if (!(event.getEntity() instanceof Player player)) return;
 
-        ItemStack item = event.getItem().getItemStack();
-        Material itemType = item.getType();
-        final List<String> bannedItems = plugin.getConfig().getStringList("items.bannedItems");
-        final List<String> maxPVPStack = plugin.getConfig().getStringList("items.maxPVPStack");
+        final ItemStack item = event.getItem().getItemStack();
+        final Material itemType = item.getType();
         final List<String> maxEnchantLevel = plugin.getConfig().getStringList("items.maxEnchantLevel");
-        
-        if(!bannedItems.get(0).equals("none") &&containsIgnoreCase(bannedItems, itemType.toString(), false)) {
-            Bukkit.getScheduler().runTaskLater(plugin, () -> player.getInventory().remove(itemType), 1L);
-        }
-        
-        if(!bannedItems.get(0).equals("none 0")&&containsIgnoreCase(maxPVPStack, itemType.toString(), true)) {
-            if (CombatListener.combat.get(player) > 0) event.setCancelled(true);
-        }
-        
-        if ( item.getItemMeta() == null) return;
-        ItemStack lastItem = removeBannedEnchant(item, maxEnchantLevel);
 
-        final ItemStack lastItemF = lastItem;
-        if (lastItem != null) {
-            Bukkit.getScheduler().runTaskLater(plugin, () -> {
-                player.getInventory().remove(item);
-                player.getInventory().addItem(lastItemF);
-            }, 1L);
-        }
+        removeBannedItemIfNeeded(player, itemType);
+
+        if (shouldStopActionBecauseOfCombat(player, itemType))
+            event.setCancelled(true);
+
+        if (item.getItemMeta() == null) return;
+        final ItemStack maximizedEnchantsItem = maximizeEnchants(item, maxEnchantLevel);
+
+        if (maximizedEnchantsItem.equals(item)) return;
+
+        Bukkit.getScheduler().runTaskLater(
+                plugin,
+                () -> Utilities.replaceItem(player, item, maximizedEnchantsItem),
+                1L
+        );
+    }
+
+    private boolean shouldStopActionBecauseOfCombat(Player player, Material itemType) {
+        final List<String> maxPVPStack = plugin.getConfig().getStringList("items.maxPVPStack");
+
+        return !maxPVPStack.get(0).equals("none 0") &&
+                containsIgnoreCase(maxPVPStack, itemType.toString(), true) &&
+                combatTimer.get(player) > 0;
+    }
+
+    private void removeBannedItemIfNeeded(Player player, Material material) {
+        final List<String> bannedItems = plugin.getConfig().getStringList("items.bannedItems");
+
+        if (!bannedItems.get(0).equals("none") && containsIgnoreCase(bannedItems, material.toString(), false))
+            Bukkit.getScheduler().runTaskLater(plugin, () -> player.getInventory().remove(material), 1L);
     }
 
 }

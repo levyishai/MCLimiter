@@ -1,26 +1,28 @@
 package me.thesnipe12.listeners;
 
+import me.thesnipe12.Utilities;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Cancellable;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 
+import java.util.HashMap;
 import java.util.List;
-
-import static me.thesnipe12.Utilities.containsIgnoreCase;
-import static me.thesnipe12.Utilities.removeBannedEnchant;
-import static me.thesnipe12.listeners.CombatListener.combat;
 
 public class InteractionsListener implements Listener {
     private final Plugin plugin;
+    private final HashMap<Player, Integer> combatTimer;
 
-    public InteractionsListener(Plugin plugin) {
+    public InteractionsListener(Plugin plugin, HashMap<Player, Integer> combatTimer) {
         this.plugin = plugin;
+        this.combatTimer = combatTimer;
     }
 
     @EventHandler
@@ -28,70 +30,54 @@ public class InteractionsListener implements Listener {
         if (event.getCurrentItem() == null) return;
         if (!(event.getWhoClicked() instanceof Player player)) return;
 
-        Material itemType = event.getCurrentItem().getType();
-        ItemStack item = event.getCurrentItem();
-        final List<String> bannedItems = plugin.getConfig().getStringList("items.bannedItems");
-        final List<String> maxEnchantLevel = plugin.getConfig().getStringList("items.maxEnchantLevel");
-        final List<String> maxPVPStack = plugin.getConfig().getStringList("items.maxPVPStack");
+        final Material itemType = event.getCurrentItem().getType();
+        final ItemStack item = event.getCurrentItem();
+        final Inventory inventory = event.getInventory();
 
-        if (!bannedItems.get(0).equals("none" +
-                "") && containsIgnoreCase(bannedItems, itemType.toString(), false)) {
+        removeBannedItemsAndMakeNeededAction(event, player, item);
+
+        if (shouldStopFromMovingToContainer(player, inventory, itemType))
             event.setCancelled(true);
-            player.getInventory().remove(itemType);
-        }
-
-        if (item.getItemMeta()  == null) return;
-        ItemStack lastItem = removeBannedEnchant(item, maxEnchantLevel);
-
-        if(lastItem != null) {
-            event.setCancelled(true);
-            for(ItemStack i : player.getInventory()) {
-                if(i == null) continue;
-                if(i.equals(item)) {
-                    player.getInventory().remove(item);
-                    player.getInventory().addItem(lastItem);
-                    return;
-                }
-            }
-        }
-
-        if(event.getInventory().getType().equals(InventoryType.CRAFTING)) return;
-        if(maxPVPStack.get(0).equals("none 0")) return;
-        if (containsIgnoreCase(maxPVPStack, itemType.toString(), true)
-                && combat.get(((Player) event.getWhoClicked()).getPlayer()) > 0) {
-            event.setCancelled(true);
-        }
     }
 
     @EventHandler
     public void on(PlayerInteractEvent event) {
         if (event.getItem() == null) return;
 
-        Player player = event.getPlayer();
-        Material itemType = event.getItem().getType();
-        ItemStack item = event.getItem();
-        final List<String> bannedItems = plugin.getConfig().getStringList("items.bannedItems");
+        final Player player = event.getPlayer();
+        final ItemStack item = event.getItem();
+
+        removeBannedItemsAndMakeNeededAction(event, player, item);
+    }
+
+    private boolean shouldStopFromMovingToContainer(Player player, Inventory currentInventory, Material currentItem) {
+        final List<String> maxPVPStack = plugin.getConfig().getStringList("items.maxPVPStack");
+
+        return
+                currentInventory.getType().equals(InventoryType.CRAFTING) && maxPVPStack.get(0).equals("none 0") &&
+                !Utilities.containsIgnoreCase(maxPVPStack, currentItem.toString(), true) && combatTimer.get(player) > 0;
+    }
+
+    private void removeBannedItemsAndMakeNeededAction(Cancellable cancellable, Player player, ItemStack currentItem) {
         final List<String> maxEnchantLevel = plugin.getConfig().getStringList("items.maxEnchantLevel");
 
-        if (!bannedItems.get(0).equals("none") && containsIgnoreCase(bannedItems, itemType.toString(), false)) {
-            event.setCancelled(true);
-            player.getInventory().remove(itemType);
+        if (isBanned(currentItem.getType())) {
+            cancellable.setCancelled(true);
+            player.getInventory().remove(currentItem.getType());
         }
 
-        if (item.getItemMeta() == null) return;
-        ItemStack lastItem = removeBannedEnchant(item, maxEnchantLevel);
+        if (currentItem.getItemMeta() == null) return;
+        final ItemStack lastItem = Utilities.maximizeEnchants(currentItem, maxEnchantLevel);
+        if (lastItem == currentItem) return;
 
-        if(lastItem != null) {
-            event.setCancelled(true);
-            for(ItemStack i : player.getInventory()){
-                if(i == null) continue;
-                if(i.equals(item)){
-                    player.getInventory().remove(item);
-                    player.getInventory().addItem(lastItem);
-                    return;
-                }
-            }
-        }
+        cancellable.setCancelled(true);
+        Utilities.replaceItem(player, currentItem, lastItem);
+    }
+
+    private boolean isBanned(Material itemType) {
+        final List<String> bannedItems = plugin.getConfig().getStringList("items.bannedItems");
+
+        return Utilities.containsIgnoreCase(bannedItems, itemType.toString(), true);
     }
 
 }

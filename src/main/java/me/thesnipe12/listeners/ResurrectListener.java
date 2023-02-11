@@ -14,7 +14,8 @@ public class ResurrectListener implements Listener {
 
     @EventHandler
     public void on(EntityResurrectEvent event) {
-        if(!plugin.getConfig().getBoolean("totemsRevive")) event.setCancelled(true);
+        if (!plugin.getConfig().getBoolean("totemsRevive"))
+            event.setCancelled(true);
     }
 
 }

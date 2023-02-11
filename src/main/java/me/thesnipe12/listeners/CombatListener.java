@@ -16,12 +16,12 @@ import static me.thesnipe12.Utilities.isNumeric;
 
 public class CombatListener implements Listener {
     private final Plugin plugin;
+    private final HashMap<Player, Integer> combatTimer;
 
-    public CombatListener(Plugin plugin) {
+    public CombatListener(Plugin plugin, HashMap<Player, Integer> combatTimer) {
         this.plugin = plugin;
+        this.combatTimer = combatTimer;
     }
-
-    public static final HashMap<Player, Integer> combat = new HashMap<>();
 
     @EventHandler
     public void on(EntityDamageByEntityEvent event) {
@@ -34,13 +34,14 @@ public class CombatListener implements Listener {
         Entity damaged = event.getEntity();
 
         if (damager instanceof Player && damaged instanceof Player && damager != damaged) {
-            combat.put((Player) damager, 30);
-            combat.put((Player) damaged, 30);
+            combatTimer.put((Player) damager, 30);
+            combatTimer.put((Player) damaged, 30);
             HashMap<Material, Integer> maxPVPStack = new HashMap<>();
-            for(String s : plugin.getConfig().getStringList("items.maxPVPStack")) {
+            for (String s : plugin.getConfig().getStringList("items.maxPVPStack")) {
                 if (s.equals("none 0")) return;
                 String[] split = s.split(" ");
-                if (isNumeric(split[1])) maxPVPStack.put(Material.getMaterial(split[0].toUpperCase()), Integer.parseInt(split[1]));
+                if (isNumeric(split[1]))
+                    maxPVPStack.put(Material.getMaterial(split[0].toUpperCase()), Integer.parseInt(split[1]));
             }
 
             limitItemsInInventoryFromList((Player) damager, maxPVPStack);
@@ -48,31 +49,19 @@ public class CombatListener implements Listener {
         }
     }
 
-    private void limitItemsInInventoryFromList(Player player,  HashMap<Material, Integer> list){
+    private void limitItemsInInventoryFromList(Player player, HashMap<Material, Integer> list) {
         HashMap<Material, Integer> itemsAmount = new HashMap<>();
-        for(ItemStack item : player.getInventory().getContents()){
-            if(item == null) continue;
-            if(list.containsKey(item.getType())){
+        for (ItemStack item : player.getInventory().getContents()) {
+            if (item == null) continue;
+            if (list.containsKey(item.getType())) {
                 itemsAmount.put(item.getType(), itemsAmount.getOrDefault(item.getType(), 0) + item.getAmount());
             }
         }
 
-        boolean usedOffHand = false;
-        if(list.containsKey(player.getInventory().getItemInOffHand().getType())){
-            itemsAmount.put(player.getInventory().getItemInOffHand().getType(), itemsAmount.getOrDefault(player
-                    .getInventory().getItemInOffHand().getType(), 0) +
-                    player.getInventory().getItemInOffHand().getAmount());
-            usedOffHand = true;
-        }
-
-        if(itemsAmount.isEmpty()) return;
-        for(Material material : itemsAmount.keySet()){
-            if(itemsAmount.get(material) > list.get(material)){
+        if (itemsAmount.isEmpty()) return;
+        for (Material material : itemsAmount.keySet()) {
+            if (itemsAmount.get(material) > list.get(material)) {
                 player.getInventory().remove(material);
-                if(usedOffHand){
-                    player.getInventory().setItemInOffHand(new ItemStack(Material.AIR));
-                    usedOffHand = false;
-                }
                 player.getInventory().addItem(new ItemStack(material, list.get(material)));
             }
         }
