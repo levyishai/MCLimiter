@@ -1,6 +1,6 @@
 package me.thesnipe12.listeners;
 
-import me.thesnipe12.Utilities;
+import me.thesnipe12.utilities.Utilities;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;

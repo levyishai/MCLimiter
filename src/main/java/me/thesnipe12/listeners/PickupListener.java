@@ -1,6 +1,6 @@
 package me.thesnipe12.listeners;
 
-import me.thesnipe12.Utilities;
+import me.thesnipe12.utilities.Utilities;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -13,8 +13,8 @@ import org.bukkit.plugin.Plugin;
 import java.util.HashMap;
 import java.util.List;
 
-import static me.thesnipe12.Utilities.containsIgnoreCase;
-import static me.thesnipe12.Utilities.maximizeEnchants;
+import static me.thesnipe12.utilities.Utilities.containsIgnoreCase;
+import static me.thesnipe12.utilities.Utilities.maximizeEnchants;
 
 
 public class PickupListener implements Listener {

@@ -1,9 +1,11 @@
 package me.thesnipe12;
 
-import me.thesnipe12.listeners.InteractionsListener;
 import me.thesnipe12.listeners.CombatListener;
+import me.thesnipe12.listeners.InteractionsListener;
 import me.thesnipe12.listeners.PickupListener;
 import me.thesnipe12.listeners.ResurrectListener;
+import me.thesnipe12.utilities.UpdateChecker;
+import org.bstats.bukkit.Metrics;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -19,6 +21,7 @@ public final class MCLimiter extends JavaPlugin {
         configSetup();
         classSetup();
         checkForUpdates();
+        new Metrics(this, PluginConstants.METRICS_ID);
     }
 
     private void configSetup() {
@@ -27,10 +30,10 @@ public final class MCLimiter extends JavaPlugin {
     }
 
     private void checkForUpdates() {
-        new UpdateChecker(this, 105111).getVersion(version -> {
+        new UpdateChecker(this, PluginConstants.RESOURCE_ID).getVersion(version -> {
             if (!version.equalsIgnoreCase(getDescription().getVersion())) {
                 getLogger().warning("There is a new version of the plugin available! Go to " +
-                        "\"https://www.spigotmc.org/resources/simplecl.101603/\" to download it.");
+                        "\"" + PluginConstants.PLUGIN_LINK + "\" to download it.");
             } else {
                 getLogger().info("You are running the latest version of the plugin!");
             }

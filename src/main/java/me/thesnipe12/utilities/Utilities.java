@@ -1,4 +1,4 @@
-package me.thesnipe12;
+package me.thesnipe12.utilities;
 
 import org.bukkit.NamespacedKey;
 import org.bukkit.enchantments.Enchantment;
