@@ -1,6 +1,6 @@
 package me.thesnipe12.listeners;
 
-import me.thesnipe12.utilities.Utilities;
+import me.thesnipe12.utilities.PluginUtilities;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
@@ -55,7 +55,7 @@ public class InteractionsListener implements Listener {
 
         return
                 currentInventory.getType().equals(InventoryType.CRAFTING) && maxPVPStack.get(0).equals("none 0") &&
-                !Utilities.containsIgnoreCase(maxPVPStack, currentItem.toString(), true) && combatTimer.get(player) > 0;
+                !PluginUtilities.containsIgnoreCase(maxPVPStack, currentItem.toString(), true) && combatTimer.get(player) > 0;
     }
 
     private void removeBannedItemsAndMakeNeededAction(Cancellable cancellable, Player player, ItemStack currentItem) {
@@ -67,17 +67,17 @@ public class InteractionsListener implements Listener {
         }
 
         if (currentItem.getItemMeta() == null) return;
-        final ItemStack lastItem = Utilities.maximizeEnchants(currentItem, maxEnchantLevel);
+        final ItemStack lastItem = PluginUtilities.maximizeEnchants(currentItem, maxEnchantLevel);
         if (lastItem == currentItem) return;
 
         cancellable.setCancelled(true);
-        Utilities.replaceItem(player, currentItem, lastItem);
+        PluginUtilities.replaceItem(player, currentItem, lastItem);
     }
 
     private boolean isBanned(Material itemType) {
         final List<String> bannedItems = plugin.getConfig().getStringList("items.bannedItems");
 
-        return Utilities.containsIgnoreCase(bannedItems, itemType.toString(), true);
+        return PluginUtilities.containsIgnoreCase(bannedItems, itemType.toString(), true);
     }
 
 }

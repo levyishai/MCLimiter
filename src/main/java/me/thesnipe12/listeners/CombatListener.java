@@ -12,7 +12,7 @@ import org.bukkit.plugin.Plugin;
 
 import java.util.HashMap;
 
-import static me.thesnipe12.utilities.Utilities.isNumeric;
+import static me.thesnipe12.utilities.PluginUtilities.isNumeric;
 
 public class CombatListener implements Listener {
     private final Plugin plugin;

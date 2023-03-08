@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public class Utilities {
+public class PluginUtilities {
     /**
      * Checks if a list contains a string, ignoring case.
      *
