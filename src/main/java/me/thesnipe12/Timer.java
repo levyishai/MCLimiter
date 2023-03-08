@@ -9,7 +9,6 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.HashMap;
 
-
 public class Timer extends BukkitRunnable {
     private final Plugin plugin;
     private final HashMap<Player, Integer> combatTimer;
